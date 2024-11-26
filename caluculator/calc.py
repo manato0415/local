@@ -1,4 +1,6 @@
 import flet as ft
+import math  # これをファイルの先頭に追加
+
 
 
 class CalcButton(ft.ElevatedButton):
@@ -90,6 +92,21 @@ class CalculatorApp(ft.Container):
                         ActionButton(text="=", button_clicked=self.button_clicked),
                     ]
                 ),
+                ft.Row(
+                    controls=[
+                        ExtraActionButton(text="sin", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="cos", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="tan", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="sqrt", button_clicked=self.button_clicked),
+                    ]
+                ),
+                ft.Row(
+                    controls=[
+                        ExtraActionButton(text="ln", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="log", button_clicked=self.button_clicked),
+                        ExtraActionButton(text="e^x", button_clicked=self.button_clicked),
+                    ]
+                ),
             ]
         )
 
@@ -136,6 +153,20 @@ class CalculatorApp(ft.Container):
                 self.result.value = str(
                     self.format_number(abs(float(self.result.value)))
                 )
+        elif data == "sin":
+            self.result.value = self.calculate_trigonometric(math.sin)
+        elif data == "cos":
+            self.result.value = self.calculate_trigonometric(math.cos)
+        elif data == "tan":
+            self.result.value = self.calculate_trigonometric(math.tan)
+        elif data == "sqrt":
+            self.result.value = self.calculate_sqrt()
+        elif data == "ln":
+            self.result.value = self.calculate_log(math.log)
+        elif data == "log":
+            self.result.value = self.calculate_log(math.log10)
+        elif data == "e^x":
+            self.result.value = self.calculate_exponential()
 
         self.update()
 
@@ -161,6 +192,42 @@ class CalculatorApp(ft.Container):
                 return "Error"
             else:
                 return self.format_number(operand1 / operand2)
+
+    def calculate_trigonometric(self, func):
+        try:
+            value = float(self.result.value)
+            # ラジアンに変換
+            value = math.radians(value)
+            return self.format_number(func(value))
+        except ValueError:
+            return "Error"
+        
+    def calculate_sqrt(self):
+        try:
+            value = float(self.result.value)
+            return self.format_number(math.sqrt(value))
+        except ValueError:
+            return "Error"
+        
+    def calculate_log(self, func):
+        try:
+            value = float(self.result.value)
+            if value <= 0:
+                return "Error"
+            return self.format_number(func(value))
+        except ValueError:
+            return "Error"
+        
+    def calculate_exponential(self):
+        try:
+            value = float(self.result.value)
+            return self.format_number(math.exp(value))
+        except ValueError:
+            return "Error"
+
+
+
+
 
     def reset(self):
         self.operator = "+"
